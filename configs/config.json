@@ -1,0 +1,10 @@
+{
+    "address" : "127.0.0.1",
+    "port" : 8000,
+    "workers_number" : 5,
+    "queue_length" : 10,
+    "operators_number" : 2,
+    "handling_min_time" : 5,
+    "handling_max_time" : 15,
+    "is_repeat_request_handler_on" : true
+}
