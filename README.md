@@ -6,6 +6,7 @@
 * conan 1.61.0
 
 # Build
+(From project-directory)
 ```bash
 mkdir build
 cd build
