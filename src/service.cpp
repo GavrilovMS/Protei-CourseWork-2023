@@ -18,18 +18,18 @@ void Service::run(std::uint16_t port, std::string address) {
     }
     catch (const std::exception& ex) {
         saved_ex = std::current_exception();
-        spdlog::critical("not services were started: {}", ex.what());
+        spdlog::critical("not all services were started: {}", ex.what());
         std::rethrow_exception(saved_ex);
     }
     spdlog::info("service is stopping...");
     try {
         operators_manager_.stop();
         controller_.stop();
+        spdlog::info("service finished successfully");
     }
     catch (const std::exception& ex) {
         saved_ex = std::current_exception();
-        spdlog::critical("not services were stopped: {}", ex.what());
+        spdlog::critical("not all services were stopped: {}", ex.what());
     }
-    spdlog::info("service finished successfully");
 }
 

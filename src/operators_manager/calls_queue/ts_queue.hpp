@@ -13,7 +13,7 @@ protected:
     std::vector<T> buffer_;
     size_t start_, end_; 
     bool is_done_;
-    mutable std::mutex mutex;
+    mutable std::mutex mutex_;
     std::condition_variable cond_cons_, cond_prod_;
     
     size_t size_, count_;
@@ -28,13 +28,13 @@ public:
     }
 
     void push(T data) {
-        std::unique_lock<std::mutex> lk{mutex};
+        std::unique_lock<std::mutex> lk{mutex_};
         cond_prod_.wait(lk, [this] { return !is_full(); });
 
         count_++;
         buffer_[end_] = data;
         end_++;
-        end_ %= buffer_.size();
+        end_ %= size_;
 
         lk.unlock();
         cond_cons_.notify_one();
@@ -42,7 +42,7 @@ public:
 
     bool wait_and_pop(T &data) {
 
-        std::unique_lock<std::mutex> lk{mutex};
+        std::unique_lock<std::mutex> lk{mutex_};
         cond_cons_.wait(lk, [this] { return !is_empty() || is_done(); });
         if (is_empty()) {
             return false;
@@ -51,7 +51,7 @@ public:
         count_--;
         data = buffer_[start_];
         start_++;
-        start_ %= buffer_.size();
+        start_ %= size_;
 
         lk.unlock();
         cond_prod_.notify_one();
@@ -59,24 +59,24 @@ public:
     }
 
     void wake_and_done() {
-        std::unique_lock<std::mutex> lk{mutex};
+        std::unique_lock<std::mutex> lk{mutex_};
         is_done_ = true;
         lk.unlock();
         cond_cons_.notify_all();
     }
 
     bool is_full_protected() const {
-        std::lock_guard<std::mutex> lk{mutex};
+        std::unique_lock<std::mutex> lk{mutex_};
         return count_ == size_;
     }
 
     bool is_empty_and_done() const {
-        std::unique_lock<std::mutex> lk{mutex};
+        std::unique_lock<std::mutex> lk{mutex_};
         return is_empty() && is_done_;
     }
 
     size_t get_size() const {
-        std::unique_lock<std::mutex> lk{mutex};
+        std::unique_lock<std::mutex> lk{mutex_};
         return size_;
     }
 };

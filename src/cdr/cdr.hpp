@@ -18,7 +18,6 @@ namespace uuids = boost::uuids;
 class CDR {
 private:
    
-
     std::fstream file_;
     std::mutex mutex_;
 public:
@@ -39,6 +38,10 @@ public:
     void write(const posix_time::ptime call_begin_date, const uuids::uuid call_id, const std::string phone_number,\
                 const posix_time::ptime call_end_date, const Status status, const posix_time::ptime answer_date, const uuids::uuid operator_id);
     void write(const posix_time::ptime call_begin_date, const uuids::uuid call_id, const std::string phone_number, const Status status);
+
+    Status get_last_status() const;
+private:
+    Status last_status_;
 };
 
 #endif 

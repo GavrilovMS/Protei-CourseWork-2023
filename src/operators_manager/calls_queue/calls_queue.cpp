@@ -10,7 +10,7 @@ CallsQueue::~CallsQueue() {
 }
 
 size_t CallsQueue::find_index(std::string phone_number) {
-    std::lock_guard<std::mutex> lk{mutex};
+    std::lock_guard<std::mutex> lk{mutex_};
     for (size_t i = start_; i != end_; i = (i+1) % buffer_.size()) {
         if (buffer_[i].get_phone_number() == phone_number) {
             return i;
@@ -20,12 +20,12 @@ size_t CallsQueue::find_index(std::string phone_number) {
 }
 
 Call CallsQueue::get_call(size_t index) {
-    std::lock_guard<std::mutex> lk{mutex};
+    std::lock_guard<std::mutex> lk{mutex_};
     return buffer_[index];
 }
 
 void CallsQueue::erase(size_t index) {
-    std::lock_guard<std::mutex> lk{mutex};
+    std::lock_guard<std::mutex> lk{mutex_};
     end_--;
     end_ %= buffer_.size();
     count_--;

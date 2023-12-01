@@ -19,11 +19,13 @@ conan_cmake_install(
     CONF "tools.cmake.cmaketoolchain:generator=${CMAKE_GENERATOR}"
 )
 
+
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
-find_package(Boost 1.81.0 EXACT REQUIRED)
+find_package(Boost 1.81.0 EXACT REQUIRED COMPONENTS system)
 find_package(spdlog 1.12.0 EXACT REQUIRED)
 find_package(nlohmann_json 3.11.2 EXACT REQUIRED)
 find_package(GTest 1.14.0 EXACT REQUIRED)
 
 add_subdirectory(src)
+add_subdirectory(tests)

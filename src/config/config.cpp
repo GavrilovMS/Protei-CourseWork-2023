@@ -10,7 +10,7 @@ void Config::initialize(std::string path) {
     json data = json::parse(f);
     f.close();
     if (!check_structure(data)) {
-        throw "Config structure is not valid";
+        throw std::runtime_error("Config structure is not valid");
     }
     address_ = data["address"];
     port_ = data["port"];
@@ -19,7 +19,7 @@ void Config::initialize(std::string path) {
     operators_number_ = data["operators_number"];
     handling_min_time_ = data["handling_min_time"];
     handling_max_time_ = data["handling_max_time"];
-    is_repeat_request_handler_on_ = data["is_repeat_request_handler_on"];
+    is_call_dupplicaton_handler_on_ = data["is_call_dupplicaton_handler_on"];
     spdlog::info("config is initialized");
 }
 
@@ -51,8 +51,8 @@ uint64_t Config::get_handling_max_time() const {
     return handling_max_time_;
 }
 
-bool Config::is_repeat_request_handler_on() const {
-    return is_repeat_request_handler_on_;
+bool Config::is_call_dupplicaton_handler_on() const {
+    return is_call_dupplicaton_handler_on_;
 }
 
 bool Config::check_structure(json& data) {
@@ -63,5 +63,6 @@ bool Config::check_structure(json& data) {
         data.contains("operators_number") &&
         data.contains("handling_min_time") &&
         data.contains("handling_max_time") &&
-        data.contains("is_repeat_request_handler_on");
+        data.contains("is_call_dupplicaton_handler_on");
+
 }

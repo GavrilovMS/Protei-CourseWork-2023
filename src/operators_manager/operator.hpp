@@ -33,6 +33,8 @@ public:
     Operator();
     ~Operator();
 
+    void initialize();
+    
     uuids::uuid get_id() const;
     posix_time::ptime  get_begin_date() const;
     posix_time::ptime get_end_date() const;

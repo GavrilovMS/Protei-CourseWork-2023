@@ -17,7 +17,7 @@ void Controller::stop() {
 }
 
 net::awaitable<void> Controller::listen(std::string address, std::uint16_t port) {
-    spdlog::info("controller is listening: {}/{}", address, port);
+    spdlog::info("controller is listening: {}:{}", address, port);
     auto executor = co_await net::this_coro::executor;
     tcp::acceptor acceptor{io_context_, {net::ip::make_address(address), port}};
     tcp::socket socket{io_context_};
@@ -33,17 +33,16 @@ net::awaitable<void> Controller::handle_accept(tcp::socket socket) {
     try {
         beast::flat_buffer buffer{8192};
         http::request<http::dynamic_body> request;
-
-
-        co_await http::async_read(socket, buffer, request, net::use_awaitable);
         
+        co_await http::async_read(socket, buffer, request, net::use_awaitable);
+      
         http::response<http::dynamic_body> response = handle_request(request);
         
         co_await http::async_write(socket, response, net::use_awaitable);
         spdlog::info("acception is handled");
     }
     catch (const std::exception& ex) {
-        
+        spdlog::error("Controller error: {}", ex.what());
     }
 }
 
@@ -96,3 +95,4 @@ void Controller::create_response(http::response<http::dynamic_body>& response, h
         spdlog::error("response created. file is not found.");
     }
 }
+

@@ -11,11 +11,15 @@ CDR& CDR::instance() {
 }
 
 void CDR::initialize(std::string path) {
-    file_.open(path, std::fstream::in  | std::fstream::app);
     if (!file_.is_open()) {
-        spdlog::error("CDR initialization error");
+        file_.open(path, std::fstream::in  | std::fstream::app);
+        if (!file_.is_open()) {
+            spdlog::error("CDR initialization error");
+        }
+        spdlog::info("CDR is initialized"); 
+    } else {
+        spdlog::warn("CDR is already opened");
     }
-    spdlog::info("CDR is initialized"); 
 }
 
 
@@ -45,6 +49,8 @@ void CDR::write(const posix_time::ptime call_begin_date, const uuids::uuid call_
                 const posix_time::ptime call_end_date, const Status status, \
                 const posix_time::ptime answer_date, const uuids::uuid operator_id) {
     if (file_.is_open()) {
+        last_status_ = status;
+        
         std::string cb_date, c_id, ph_num, st, ce_date, ans_date, op_id, c_len;
 
         cb_date = posix_time::to_iso_extended_string(call_begin_date);
@@ -70,6 +76,7 @@ void CDR::write(const posix_time::ptime call_begin_date, const uuids::uuid call_
 
 void CDR::write(const posix_time::ptime call_begin_date, const uuids::uuid call_id, const std::string phone_number, const Status status) {
     if (file_.is_open()) {
+        last_status_ = status;
         std::string cb_date, c_id, ph_num, st, ce_date, ans_date, op_id, c_len;
 
         cb_date = posix_time::to_iso_extended_string(call_begin_date);
@@ -90,4 +97,8 @@ void CDR::write(const posix_time::ptime call_begin_date, const uuids::uuid call_
     } else {
         spdlog::warn("CDR is not opened");
     }
+}
+
+CDR::Status CDR::get_last_status() const {
+    return last_status_;
 }

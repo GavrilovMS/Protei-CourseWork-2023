@@ -20,6 +20,8 @@
 #include "cdr.hpp"
 #include "config.hpp"
 
+#include <gtest/gtest.h>
+
 namespace net = boost::asio;
 namespace posix_time = boost::posix_time;
 
@@ -36,7 +38,7 @@ private:
     bool is_working_;
     void work();
     net::awaitable<void> work_with_call(Operator op, Call call); 
-
+    void call_dupplicaton_handler(Call call, size_t index);
 public:
     
     OperatorsManager(net::io_context& io_context, size_t operators_number, size_t queue_length);
@@ -45,6 +47,8 @@ public:
     bool handle_call(Call call);
     void start();
     void stop();
+
+    FRIEND_TEST(OperatorsManagerTest, WorkWithCall);
 
 };
 

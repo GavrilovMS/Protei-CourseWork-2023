@@ -1,13 +1,16 @@
 #include "operator.hpp"
 
 Operator::Operator() : is_busy_{false} {
-    uuid_ = uuids::random_generator()();
+
 }
 
 Operator::~Operator() {
 
 }
 
+void Operator::initialize() {
+    uuid_ = uuids::random_generator()();
+}
 uuids::uuid Operator::get_id() const {
     return uuid_;
 }

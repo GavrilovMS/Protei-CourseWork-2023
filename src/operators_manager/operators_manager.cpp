@@ -6,6 +6,7 @@ OperatorsManager::OperatorsManager(net::io_context& io_context, size_t operators
     operators_queue_{operators_number} {
     for (size_t i = 0; i < operators_number; i++) {
         Operator op;
+        op.initialize();
         operators_queue_.push(op);
     }
 }
@@ -17,27 +18,31 @@ OperatorsManager::~OperatorsManager() {
 }
 
 bool OperatorsManager::handle_call(Call call) {
-    if (!calls_queue_.is_full_protected()) {
-        size_t temp_index = calls_queue_.find_index(call.get_phone_number());
-        if (temp_index != calls_queue_.get_size()) {
-            
-            if (Config::instance().is_repeat_request_handler_on()) {
-                Call canceled_call = calls_queue_.get_call(temp_index);
-                calls_queue_.erase(temp_index);
-                CDR::instance().write(canceled_call.get_call_date(), canceled_call.get_id(), canceled_call.get_phone_number(), CDR::Status::CALL_DUPLICATION);
-                calls_queue_.push(call);
-                return true;
-            } else {
-                CDR::instance().write(call.get_call_date(), call.get_id(), call.get_phone_number(), CDR::Status::ALREADY_IN_QUEUE);
-                return false;
-            }
-        }
-        calls_queue_.push(call);
-        return true;
+    if (calls_queue_.is_full_protected()) {
+        CDR::instance().write(call.get_call_date(), call.get_id(), call.get_phone_number(), CDR::Status::OVERLOAD);
+        return false;
     } 
 
-    CDR::instance().write(call.get_call_date(), call.get_id(), call.get_phone_number(), CDR::Status::OVERLOAD);
-    return false;
+    size_t temp_index = calls_queue_.find_index(call.get_phone_number());
+    if (temp_index != calls_queue_.get_size()) {
+        if (Config::instance().is_call_dupplicaton_handler_on()) {
+            call_dupplicaton_handler(call, temp_index);
+            return true;
+        } else {
+            CDR::instance().write(call.get_call_date(), call.get_id(), call.get_phone_number(), CDR::Status::ALREADY_IN_QUEUE);
+            return false;
+        }
+    }
+
+    calls_queue_.push(call);
+    return true;
+}
+
+void OperatorsManager::call_dupplicaton_handler(Call call, size_t index) {
+    Call canceled_call = calls_queue_.get_call(index);
+    calls_queue_.erase(index);
+    CDR::instance().write(canceled_call.get_call_date(), canceled_call.get_id(), canceled_call.get_phone_number(), CDR::Status::CALL_DUPLICATION);
+    calls_queue_.push(call);
 }
 
 void OperatorsManager::start() {
@@ -89,3 +94,4 @@ net::awaitable<void> OperatorsManager::work_with_call(Operator op, Call call) {
     operators_queue_.push(op);
     co_return;
 }
+

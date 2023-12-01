@@ -35,8 +35,8 @@ target_link_libraries(${target_name}
     PRIVATE
         Boost::system
         spdlog::spdlog 
-        nlohmann_json::nlohmann_json 
-        GTest::gtest
+        nlohmann_json::nlohmann_json
+        GTest::gtest 
 )
 
 target_include_directories(${target_name}
@@ -51,3 +51,4 @@ target_include_directories(${target_name}
         utils
 )
 
+configure_file(${CMAKE_SOURCE_DIR}/configs/config.json ${CMAKE_BINARY_DIR}/src/config.json COPYONLY)

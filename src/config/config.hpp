@@ -22,7 +22,7 @@ private:
     size_t operators_number_;
     uint64_t handling_min_time_;
     uint64_t handling_max_time_;
-    bool is_repeat_request_handler_on_;
+    bool is_call_dupplicaton_handler_on_;
 
     bool check_structure(json& data);
 
@@ -46,7 +46,7 @@ public:
     size_t get_operators_number() const;
     uint64_t get_handling_min_time() const;
     uint64_t get_handling_max_time() const;
-    bool is_repeat_request_handler_on() const;
+    bool is_call_dupplicaton_handler_on() const;
 };
 
 #endif

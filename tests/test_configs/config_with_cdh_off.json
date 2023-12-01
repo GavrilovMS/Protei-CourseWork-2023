@@ -6,5 +6,5 @@
     "operators_number" : 2,
     "handling_min_time" : 5,
     "handling_max_time" : 15,
-    "is_call_dupplicaton_handler_on" : true
+    "is_call_dupplicaton_handler_on" : false
 }
