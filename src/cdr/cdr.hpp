@@ -35,6 +35,7 @@ public:
     
     enum Status{OK, ALREADY_IN_QUEUE, CALL_DUPLICATION, TIMEOUT, OVERLOAD};
     std::string status_to_string(Status status);
+    
     void write(const posix_time::ptime call_begin_date, const uuids::uuid call_id, const std::string phone_number,\
                 const posix_time::ptime call_end_date, const Status status, const posix_time::ptime answer_date, const uuids::uuid operator_id);
     void write(const posix_time::ptime call_begin_date, const uuids::uuid call_id, const std::string phone_number, const Status status);

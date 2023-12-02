@@ -30,6 +30,7 @@ void Service::run(std::uint16_t port, std::string address) {
     catch (const std::exception& ex) {
         saved_ex = std::current_exception();
         spdlog::critical("not all services were stopped: {}", ex.what());
+        std::rethrow_exception(saved_ex);
     }
 }
 

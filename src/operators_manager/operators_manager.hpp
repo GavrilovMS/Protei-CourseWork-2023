@@ -48,8 +48,6 @@ public:
     void start();
     void stop();
 
-    FRIEND_TEST(OperatorsManagerTest, WorkWithCall);
-
 };
 
 
